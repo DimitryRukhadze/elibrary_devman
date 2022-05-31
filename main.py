@@ -1,4 +1,5 @@
 import os
+import argparse
 
 from urllib.parse import urljoin, urlsplit, unquote
 
@@ -95,6 +96,12 @@ def parse_book_page(book_id):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description='Программа скачивает книги')
+    parser.add_argument('start_id', help='Starting book id', type=int)
+    parser.add_argument('end_id', help='Final book id', type=int)
+    args = parser.parse_args()
+    print(args)
+
     url = "https://tululu.org/txt.php"
 
     books_dir = 'books'
@@ -102,7 +109,7 @@ if __name__ == '__main__':
     os.makedirs(books_dir, exist_ok=True)
     os.makedirs(img_dir, exist_ok=True)
 
-    for book_id in range(1,11):
+    for book_id in range(args.start_id, (args.end_id + 1)):
       try:
           book_info = parse_book_page(book_id)
       #    download_image(img_full_url, img_dir)

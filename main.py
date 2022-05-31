@@ -102,8 +102,6 @@ if __name__ == '__main__':
     parser.add_argument('end_id', help='Final book id', type=int)
     args = parser.parse_args()
 
-    url = "https://tululu.org/txt.php"
-
     books_dir = 'books'
     img_dir = 'images'
     os.makedirs(books_dir, exist_ok=True)

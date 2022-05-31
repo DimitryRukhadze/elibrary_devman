@@ -52,11 +52,11 @@ def download_image(img_url, img_folder):
 
 
 
-def get_book_info(book_id):
+def parse_book_page(book_id):
 
-    book_info_url = f"https://tululu.org/b{book_id}/"
+    book_page_url = f"https://tululu.org/b{book_id}/"
 
-    response = requests.get(book_info_url)
+    response = requests.get(book_page_url)
     response.raise_for_status()
 
     check_for_redirect(response)
@@ -65,24 +65,32 @@ def get_book_info(book_id):
     book_title_tag = book_soup.find('body').find('table', class_='tabs').find('h1')
     book_img_rel_url = book_soup.find('div', class_='bookimage').find('img')['src']
     book_comments_tags = book_soup.find_all('div', class_='texts')
+    book_genre_tags = book_soup.find('span', class_='d_book').find_all('a')
+
     book_comments = [
         comment.find('span', class_='black').text
         for comment in book_comments_tags
     ]
-    book_genre_tags = book_soup.find('span', class_='d_book').find_all('a')
+
     book_genres = [
         genre.text
         for genre in book_genre_tags
     ]
 
-    print(book_genres)
-
-    book_img_full_url = urljoin(book_info_url, book_img_rel_url)
+    book_img_full_url = urljoin(book_page_url, book_img_rel_url)
 
     book_props = book_title_tag.text.split('::')
     book_name = book_props[0].strip()
+    book_author = book_props[1].strip()
 
-    return book_name, book_img_full_url, book_comments, book_genres
+    book_data = {
+        'title': book_name,
+        'author': book_author,
+        'img url': book_img_full_url,
+        'comments': book_comments,
+        'genres': book_genres
+    }
+    return book_data
 
 
 if __name__ == '__main__':
@@ -96,7 +104,7 @@ if __name__ == '__main__':
 
     for book_id in range(1,11):
       try:
-          book_title, img_full_url, user_comments, genres = get_book_info(book_id)
+          book_info = parse_book_page(book_id)
       #    download_image(img_full_url, img_dir)
       #    download_txt(url, book_title, book_id, folder=books_dir)
       except requests.HTTPError:

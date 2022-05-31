@@ -15,7 +15,9 @@ def check_for_redirect(response_to_check):
         raise requests.HTTPError
 
 
-def download_txt(txt_url, filename, id_number, folder='books/'):
+def download_txt(filename, id_number, folder='books/'):
+
+    txt_url = "https://tululu.org/txt.php"
 
     params = {
         'id': id_number
@@ -46,11 +48,10 @@ def download_image(img_url, img_folder):
     filename = os.path.basename(file_local_path)
 
     if os.path.splitext(filename)[-1] == '.jpg':
-        filepath = os.path.join(img_folder,filename)
+        filepath = os.path.join(img_folder, filename)
 
         with open(filepath, 'wb') as book_img:
             book_img.write(response.content)
-
 
 
 def parse_book_page(book_id):
@@ -100,7 +101,6 @@ if __name__ == '__main__':
     parser.add_argument('start_id', help='Starting book id', type=int)
     parser.add_argument('end_id', help='Final book id', type=int)
     args = parser.parse_args()
-    print(args)
 
     url = "https://tululu.org/txt.php"
 
@@ -110,10 +110,9 @@ if __name__ == '__main__':
     os.makedirs(img_dir, exist_ok=True)
 
     for book_id in range(args.start_id, (args.end_id + 1)):
-      try:
-          book_info = parse_book_page(book_id)
-      #    download_image(img_full_url, img_dir)
-      #    download_txt(url, book_title, book_id, folder=books_dir)
-      except requests.HTTPError:
-          continue
-
+        try:
+            book_info = parse_book_page(book_id)
+            download_image(book_info['img url'], img_dir)
+            download_txt(book_info['title'], book_id, folder=books_dir)
+        except requests.HTTPError:
+            continue

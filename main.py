@@ -52,7 +52,7 @@ def download_image(img_url, img_folder):
 
 
 
-def get_book_title(book_id):
+def get_book_info(book_id):
 
     book_info_url = f"https://tululu.org/b{book_id}/"
 
@@ -64,13 +64,18 @@ def get_book_title(book_id):
     book_soup = BeautifulSoup(response.text, 'lxml')
     book_title_tag = book_soup.find('body').find('table', class_='tabs').find('h1')
     book_img_rel_url = book_soup.find('div', class_='bookimage').find('img')['src']
+    book_comments_tags = book_soup.find_all('div', class_='texts')
+    book_comments = [
+        comment.find('span', class_='black').text
+        for comment in book_comments_tags
+    ]
 
-    img_full_url = urljoin(book_info_url, book_img_rel_url)
+    book_img_full_url = urljoin(book_info_url, book_img_rel_url)
 
     book_props = book_title_tag.text.split('::')
     book_name = book_props[0].strip()
 
-    return book_name, img_full_url
+    return book_name, book_img_full_url, book_comments
 
 
 if __name__ == '__main__':
@@ -84,8 +89,8 @@ if __name__ == '__main__':
 
     for book_id in range(1,11):
       try:
-          book_title, img_full_url = get_book_title(book_id)
-          download_image(img_full_url, img_dir)
+          book_title, img_full_url, user_comments = get_book_info(book_id)
+      #    download_image(img_full_url, img_dir)
       #    download_txt(url, book_title, book_id, folder=books_dir)
       except requests.HTTPError:
           continue

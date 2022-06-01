@@ -1,5 +1,6 @@
 import os
 import argparse
+import logging
 
 from urllib.parse import urljoin, urlsplit, unquote
 
@@ -8,13 +9,26 @@ import requests
 
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+from retry import retry
 
 
 def check_for_redirect(response_to_check):
     if response_to_check.history:
         raise requests.HTTPError
 
+@retry(requests.ConnectionError, delay=1)
+def get_book_page_html(book_id):
 
+    book_page_url = f"https://tululu.org/b{book_id}/"
+
+    response = requests.get(book_page_url)
+    response.raise_for_status()
+
+    check_for_redirect(response)
+
+    return response.text, book_page_url
+
+@retry(requests.ConnectionError, delay=1)
 def download_txt(filename, id_number, folder='books/'):
 
     txt_url = "https://tululu.org/txt.php"
@@ -38,7 +52,7 @@ def download_txt(filename, id_number, folder='books/'):
 
     return filepath
 
-
+@retry(requests.ConnectionError, delay=1)
 def download_image(img_url, img_folder):
 
     response = requests.get(img_url)
@@ -54,7 +68,7 @@ def download_image(img_url, img_folder):
             book_img.write(response.content)
 
 
-def parse_book_page(book_page_html):
+def parse_book_page(book_page_html, book_page_url):
 
     book_soup = BeautifulSoup(book_page_html, 'lxml')
     book_title_tag = book_soup.find('body').find('table', class_='tabs').find('h1')
@@ -95,22 +109,20 @@ if __name__ == '__main__':
     parser.add_argument('end_id', help='Final book id', type=int)
     args = parser.parse_args()
 
+    logging.basicConfig(format=f'%(levelname)s %(message)s')
+    logging.warning('There is no book with such id. Trying next book id...')
+
     books_dir = 'books'
     img_dir = 'images'
     os.makedirs(books_dir, exist_ok=True)
     os.makedirs(img_dir, exist_ok=True)
 
     for book_id in range(args.start_id, args.end_id + 1):
-
-        book_page_url = f"https://tululu.org/b{book_id}/"
-
-        response = requests.get(book_page_url)
-        response.raise_for_status()
-
         try:
-            check_for_redirect(response)
-            book_info = parse_book_page(response.text)
+            book_html, book_page_url = get_book_page_html(book_id)
+            book_info = parse_book_page(book_html, book_page_url)
             download_image(book_info['img url'], img_dir)
             download_txt(book_info['title'], book_id, folder=books_dir)
         except requests.HTTPError:
+            logging.warning('There is no book with such id. Trying next book id...')
             continue

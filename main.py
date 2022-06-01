@@ -75,16 +75,16 @@ def parse_book_page(book_page_html):
     book_img_full_url = urljoin(book_page_url, book_img_rel_url)
 
     book_props = book_title_tag.text.split('::')
-    book_name = book_props[0].strip()
-    book_author = book_props[1].strip()
+    book_name, book_author = book_props
 
     book_data = {
-        'title': book_name,
-        'author': book_author,
+        'title': book_name.strip(),
+        'author': book_author.strip(),
         'img url': book_img_full_url,
         'comments': book_comments,
         'genres': book_genres
     }
+
     return book_data
 
 

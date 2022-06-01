@@ -77,7 +77,7 @@ def parse_book_page(book_page_html):
     book_props = book_title_tag.text.split('::')
     book_name, book_author = book_props
 
-    book_data = {
+    book_description = {
         'title': book_name.strip(),
         'author': book_author.strip(),
         'img url': book_img_full_url,
@@ -85,7 +85,7 @@ def parse_book_page(book_page_html):
         'genres': book_genres
     }
 
-    return book_data
+    return book_description
 
 
 if __name__ == '__main__':

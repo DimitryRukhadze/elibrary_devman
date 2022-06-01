@@ -107,7 +107,7 @@ if __name__ == '__main__':
     os.makedirs(books_dir, exist_ok=True)
     os.makedirs(img_dir, exist_ok=True)
 
-    for book_id in range(args.start_id, (args.end_id + 1)):
+    for book_id in range(args.start_id, args.end_id + 1):
         try:
             book_info = parse_book_page(book_id)
             download_image(book_info['img url'], img_dir)

@@ -54,16 +54,9 @@ def download_image(img_url, img_folder):
             book_img.write(response.content)
 
 
-def parse_book_page(book_id):
+def parse_book_page(book_page_html):
 
-    book_page_url = f"https://tululu.org/b{book_id}/"
-
-    response = requests.get(book_page_url)
-    response.raise_for_status()
-
-    check_for_redirect(response)
-
-    book_soup = BeautifulSoup(response.text, 'lxml')
+    book_soup = BeautifulSoup(book_page_html, 'lxml')
     book_title_tag = book_soup.find('body').find('table', class_='tabs').find('h1')
     book_img_rel_url = book_soup.find('div', class_='bookimage').find('img')['src']
     book_comments_tags = book_soup.find_all('div', class_='texts')
@@ -108,8 +101,15 @@ if __name__ == '__main__':
     os.makedirs(img_dir, exist_ok=True)
 
     for book_id in range(args.start_id, args.end_id + 1):
+
+        book_page_url = f"https://tululu.org/b{book_id}/"
+
+        response = requests.get(book_page_url)
+        response.raise_for_status()
+
         try:
-            book_info = parse_book_page(book_id)
+            check_for_redirect(response)
+            book_info = parse_book_page(response.text)
             download_image(book_info['img url'], img_dir)
             download_txt(book_info['title'], book_id, folder=books_dir)
         except requests.HTTPError:

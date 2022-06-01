@@ -44,7 +44,7 @@ def download_image(img_url, img_folder):
     response = requests.get(img_url)
     response.raise_for_status()
 
-    file_local_path = unquote(urlsplit(img_url).path)
+    file_local_path = urlsplit(unquote(img_url)).path
     filename = os.path.basename(file_local_path)
 
     if os.path.splitext(filename)[-1] == '.jpg':

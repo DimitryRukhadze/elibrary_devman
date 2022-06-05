@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from retry import retry
+from dotenv import load_dotenv
 
 
 def check_for_redirect(response_to_check):
@@ -91,6 +92,9 @@ def parse_book_page(book_page_html, book_page_url):
 
 @retry(requests.ConnectionError, delay=1)
 def main():
+
+    load_dotenv()
+
     parser = argparse.ArgumentParser(description='Программа скачивает книги')
     parser.add_argument('start_id', help='Starting book id', type=int)
     parser.add_argument('end_id', help='Final book id', type=int)
@@ -98,8 +102,8 @@ def main():
 
     logging.basicConfig(format=f'%(levelname)s %(message)s')
 
-    books_dir = 'books'
-    img_dir = 'images'
+    books_dir = os.environ.get('BOOKS_DIR')
+    img_dir = os.environ.get('IMAGES_DIR')
     os.makedirs(books_dir, exist_ok=True)
     os.makedirs(img_dir, exist_ok=True)
 

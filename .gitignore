@@ -4,3 +4,4 @@ images
 *.gitattributes
 bs4_tutorial.py
 *.pyc
+*.json

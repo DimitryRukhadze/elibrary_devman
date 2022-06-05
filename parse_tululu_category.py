@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+import argparse
 
 from urllib.parse import urljoin, urlsplit
 
@@ -23,11 +24,14 @@ def parse_book_urls(page_html, base_book_url):
     return book_urls
 
 
-def puginate_book_urls():
+def puginate_book_urls(start_page, end_page=0):
+
+    if not end_page:
+        end_page = start_page + 1
 
     all_book_urls = []
 
-    for page_num in range(1,5):
+    for page_num in range(start_page, end_page):
         sci_fi_url = f'https://tululu.org/l55/{page_num}'
 
         result = requests.get(sci_fi_url)
@@ -41,6 +45,11 @@ def puginate_book_urls():
 if __name__ == '__main__':
     load_dotenv()
 
+    parser = argparse.ArgumentParser(description='Программа скачивает книги')
+    parser.add_argument('start_page', help='Starting book id', type=int)
+    parser.add_argument('--end_page', help='Final book id', type=int)
+    args = parser.parse_args()
+
     logging.basicConfig(format=f'%(levelname)s %(message)s')
 
     books_dir = os.environ.get('BOOKS_DIR')
@@ -49,7 +58,7 @@ if __name__ == '__main__':
     os.makedirs(books_dir, exist_ok=True)
     os.makedirs(img_dir, exist_ok=True)
 
-    book_urls = puginate_book_urls()
+    book_urls = puginate_book_urls(args.start_page, args.end_page)
     books_info = []
 
     for url in book_urls:

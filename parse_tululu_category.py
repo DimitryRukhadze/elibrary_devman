@@ -46,17 +46,35 @@ if __name__ == '__main__':
     load_dotenv()
 
     parser = argparse.ArgumentParser(description='Программа скачивает книги')
-    parser.add_argument('start_page', help='Starting book id', type=int)
-    parser.add_argument('--end_page', help='Final book id', type=int)
+    parser.add_argument('start_page', help='Starting book page', type=int)
+    parser.add_argument('--end_page', help='Final book page', type=int)
+    parser.add_argument('--dest_folder', help='Download folder', type=str)
+    parser.add_argument('--skip_imgs', help='Ввести, если не хотите скачивать обложки', action='store_true')
+    parser.add_argument('--skip_txt', help='Ввести, если не хотите скачивать книги', action='store_true')
+    parser.add_argument('--json_path', help='Указать путь для сохранения .json', type=str)
     args = parser.parse_args()
 
     logging.basicConfig(format=f'%(levelname)s %(message)s')
 
     books_dir = os.environ.get('BOOKS_DIR')
     img_dir = os.environ.get('IMAGES_DIR')
+    json_file_save = 'book_info.json'
 
-    os.makedirs(books_dir, exist_ok=True)
-    os.makedirs(img_dir, exist_ok=True)
+    if args.dest_folder:
+        os.makedirs(args.dest_folder, exist_ok=True)
+        books_dir = os.path.join(args.dest_folder, books_dir)
+        img_dir = os.path.join(args.dest_folder, img_dir)
+        if not args.json_path:
+            json_file_save = os.path.join(args.dest_folder, json_file_save)
+
+    if not args.skip_txt:
+        os.makedirs(books_dir, exist_ok=True)
+    if not args.skip_imgs:
+        os.makedirs(img_dir, exist_ok=True)
+    if args.json_path:
+        os.makedirs(args.json_path, exist_ok=True)
+        json_file_save = os.path.join(args.json_path, json_file_save)
+
 
     book_urls = puginate_book_urls(args.start_page, args.end_page)
     books_info = []
@@ -72,11 +90,13 @@ if __name__ == '__main__':
             books_info.append(book_info)
             book_id = urlsplit(url).path.strip('/')[1:]
 
-            main.download_image(book_info['img url'], img_dir)
-            main.download_txt(book_info['title'], book_id, folder=books_dir)
+            if not args.skip_imgs:
+                main.download_image(book_info['img url'], img_dir)
+            if not args.skip_txt:
+                main.download_txt(book_info['title'], book_id, folder=books_dir)
 
         except requests.HTTPError:
             logging.warning('There is no book with such id. Trying next id...')
 
-    with open('book_info.json', 'w', encoding='utf-8') as json_file:
+    with open(json_file_save, 'w', encoding='utf-8') as json_file:
         json.dump(books_info, json_file, ensure_ascii=False)

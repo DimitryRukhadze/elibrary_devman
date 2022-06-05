@@ -59,13 +59,17 @@ def download_image(img_url, img_folder):
 def parse_book_page(book_page_html, book_page_url):
 
     book_soup = BeautifulSoup(book_page_html, 'lxml')
-    book_title_tag = book_soup.find('body').find('table', class_='tabs').find('h1')
-    book_img_rel_url = book_soup.find('div', class_='bookimage').find('img')['src']
-    book_comments_tags = book_soup.find_all('div', class_='texts')
-    book_genre_tags = book_soup.find('span', class_='d_book').find_all('a')
+    title_selector = 'body .tabs h1'
+    book_title_tag = book_soup.select_one(title_selector)
+    img_selector = ".bookimage img"
+    book_img_rel_url = book_soup.select_one(img_selector)['src']
+    comments_selector = '.texts .black'
+    book_comments_tags = book_soup.select(comments_selector)
+    genre_selector = '#content span.d_book a'
+    book_genre_tags = book_soup.select(genre_selector)
 
     book_comments = [
-        comment.find('span', class_='black').text
+        comment.text
         for comment in book_comments_tags
     ]
 

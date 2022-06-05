@@ -14,9 +14,9 @@ from dotenv import load_dotenv
 
 def parse_book_urls(page_html, base_book_url):
     book_soup = BeautifulSoup(page_html, 'lxml')
-    book_tabs = book_soup.find_all('table', class_='d_book')
+    book_tabs = book_soup.select('.d_book .bookimage a')
     book_urls = [
-        urljoin(base_book_url, book.find('a')['href'])
+        urljoin(base_book_url, book['href'])
         for book in book_tabs
     ]
 

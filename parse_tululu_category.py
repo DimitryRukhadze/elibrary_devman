@@ -30,9 +30,13 @@ def puginate_book_urls(start_page, end_page=0):
     if not end_page:
         end_page = start_page + 1
 
+    if end_page:
+        end_page += 1
+
     all_book_urls = []
 
     for page_num in range(start_page, end_page):
+        print(page_num)
         sci_fi_url = f'https://tululu.org/l55/{page_num}'
 
         result = requests.get(sci_fi_url)
@@ -42,8 +46,8 @@ def puginate_book_urls(start_page, end_page=0):
 
     return all_book_urls
 
-@retry(requests.ConnectionError, delay=1))
-def main():
+@retry(requests.ConnectionError, delay=1)
+def main_fn():
     load_dotenv()
 
     parser = argparse.ArgumentParser(description='Программа скачивает книги')
@@ -61,13 +65,15 @@ def main():
     img_dir = os.environ.get('IMAGES_DIR')
     json_file_save = 'book_info.json'
 
+    if args.end_page and args.end_page < args.start_page:
+        logging.warning('The start_page arg is bigger than end_page')
+        raise
     if args.dest_folder:
         os.makedirs(args.dest_folder, exist_ok=True)
         books_dir = os.path.join(args.dest_folder, books_dir)
         img_dir = os.path.join(args.dest_folder, img_dir)
         if not args.json_path:
             json_file_save = os.path.join(args.dest_folder, json_file_save)
-
     if not args.skip_txt:
         os.makedirs(books_dir, exist_ok=True)
     if not args.skip_imgs:
@@ -104,4 +110,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main_fn()

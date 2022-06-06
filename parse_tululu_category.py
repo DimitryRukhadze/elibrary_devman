@@ -11,6 +11,7 @@ import main
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from retry import retry
 
 
 def parse_book_urls(page_html, base_book_url):
@@ -41,8 +42,8 @@ def puginate_book_urls(start_page, end_page=0):
 
     return all_book_urls
 
-
-if __name__ == '__main__':
+@retry(requests.ConnectionError, delay=1))
+def main():
     load_dotenv()
 
     parser = argparse.ArgumentParser(description='Программа скачивает книги')
@@ -100,3 +101,7 @@ if __name__ == '__main__':
 
     with open(json_file_save, 'w', encoding='utf-8') as json_file:
         json.dump(books_info, json_file, ensure_ascii=False)
+
+
+if __name__ == '__main__':
+    main()

@@ -109,7 +109,8 @@ def main_fn():
         book_urls = get_book_urls(args.start_page, args.end_page)
     except requests.HTTPError:
         logging.warning(f'There is no page with this number')
-    books_info = []
+
+    books_details = []
 
     for url in book_urls:
         try:
@@ -118,18 +119,18 @@ def main_fn():
 
             main.check_for_redirect(response)
 
-            book_info = main.parse_book_page(response.text, url)
-            books_info.append(book_info)
+            book_details = main.parse_book_page(response.text, url)
+            books_details.append(book_details)
             book_id = urlsplit(url).path.strip('/')[1:]
 
             if not args.skip_imgs:
                 main.download_image(
-                    book_info['img url'],
+                    book_details['img url'],
                     img_dir
                     )
             if not args.skip_txt:
                 main.download_txt(
-                    book_info['title'],
+                    book_details['title'],
                     book_id,
                     folder=books_dir
                     )
@@ -138,7 +139,7 @@ def main_fn():
             logging.warning('There is no book with such id. Trying next id...')
 
     with open(json_file_save, 'w', encoding='utf-8') as json_file:
-        json.dump(books_info, json_file, ensure_ascii=False)
+        json.dump(books_details, json_file, ensure_ascii=False)
 
 
 if __name__ == '__main__':

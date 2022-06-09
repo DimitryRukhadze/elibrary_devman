@@ -38,6 +38,7 @@ def puginate_book_urls(start_page, end_page=0):
 
         result = requests.get(sci_fi_url)
         result.raise_for_status()
+        main.check_for_redirect(result)
 
         all_book_urls.extend(parse_book_urls(result.text, sci_fi_url))
 
@@ -104,7 +105,10 @@ def main_fn():
         os.makedirs(args.json_path, exist_ok=True)
         json_file_save = os.path.join(args.json_path, json_file_save)
 
-    book_urls = puginate_book_urls(args.start_page, args.end_page)
+    try:
+        book_urls = puginate_book_urls(args.start_page, args.end_page)
+    except requests.HTTPError:
+        logging.warning(f'There is no page with this number')
     books_info = []
 
     for url in book_urls:

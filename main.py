@@ -1,12 +1,9 @@
 import os
 import argparse
 import logging
-
 from urllib.parse import urljoin, urlsplit, unquote
 
-
 import requests
-
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from retry import retry

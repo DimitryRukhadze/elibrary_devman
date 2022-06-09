@@ -2,13 +2,10 @@ import os
 import logging
 import json
 import argparse
-
 from urllib.parse import urljoin, urlsplit
-
 
 import requests
 import main
-
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from retry import retry

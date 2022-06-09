@@ -23,7 +23,7 @@ def parse_book_urls(page_html, base_book_url):
     return book_urls
 
 
-def puginate_book_urls(start_page, end_page=0):
+def get_book_urls(start_page, end_page=0):
 
     if not end_page:
         end_page = start_page + 1
@@ -106,7 +106,7 @@ def main_fn():
         json_file_save = os.path.join(args.json_path, json_file_save)
 
     try:
-        book_urls = puginate_book_urls(args.start_page, args.end_page)
+        book_urls = get_book_urls(args.start_page, args.end_page)
     except requests.HTTPError:
         logging.warning(f'There is no page with this number')
     books_info = []

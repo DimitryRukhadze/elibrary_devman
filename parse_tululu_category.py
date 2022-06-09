@@ -45,7 +45,6 @@ def get_book_urls(start_page, end_page=0):
     return all_book_urls
 
 
-@retry(requests.ConnectionError, delay=1)
 def main_fn():
     load_dotenv()
 
@@ -105,10 +104,18 @@ def main_fn():
         os.makedirs(args.json_path, exist_ok=True)
         json_file_save = os.path.join(args.json_path, json_file_save)
 
-    try:
-        book_urls = get_book_urls(args.start_page, args.end_page)
-    except requests.HTTPError:
-        logging.warning(f'There is no page with this number')
+    for attempt in range(10):
+        try:
+            book_urls = get_book_urls(args.start_page, args.end_page)
+            break
+        except requests.HTTPError:
+            logging.warning(f'There is no page with this number')
+            break
+        except requests.ConnectionError:
+            logging.warning(f'Connection retry. {attempt} try')
+
+    else:
+        logging.critical('Connection lost. Failed to reconnect')
 
     books_details = []
 

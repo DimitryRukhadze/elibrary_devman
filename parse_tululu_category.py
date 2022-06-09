@@ -33,7 +33,6 @@ def puginate_book_urls(start_page, end_page=0):
     all_book_urls = []
 
     for page_num in range(start_page, end_page):
-        print(page_num)
         sci_fi_url = f'https://tululu.org/l55/{page_num}'
 
         result = requests.get(sci_fi_url)

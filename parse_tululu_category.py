@@ -5,10 +5,11 @@ import argparse
 from urllib.parse import urljoin, urlsplit
 
 import requests
-import main
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from retry import retry
+
+import main
 
 
 def parse_book_urls(page_html, base_book_url):

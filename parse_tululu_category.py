@@ -61,6 +61,7 @@ def main_fn():
         )
     parser.add_argument(
         '--dest_folder',
+        default=os.getcwd(),
         help='Download folder',
         type=str
         )
@@ -76,6 +77,7 @@ def main_fn():
         )
     parser.add_argument(
         '--json_path',
+        default=os.getcwd(),
         help='Указать путь для сохранения .json',
         type=str
         )
@@ -87,22 +89,19 @@ def main_fn():
     img_dir = os.environ.get('IMAGES_DIR')
     json_file_save = 'book_info.json'
 
+    os.makedirs(args.dest_folder, exist_ok=True)
+    books_dir = os.path.join(args.dest_folder, books_dir)
+    img_dir = os.path.join(args.dest_folder, img_dir)
+    json_file_save = os.path.join(args.json_path, json_file_save)
+
     if args.end_page and args.end_page < args.start_page:
         logging.warning('The start_page arg is bigger than end_page')
         raise
-    if args.dest_folder:
-        os.makedirs(args.dest_folder, exist_ok=True)
-        books_dir = os.path.join(args.dest_folder, books_dir)
-        img_dir = os.path.join(args.dest_folder, img_dir)
-        if not args.json_path:
-            json_file_save = os.path.join(args.dest_folder, json_file_save)
+
     if not args.skip_txt:
         os.makedirs(books_dir, exist_ok=True)
     if not args.skip_imgs:
         os.makedirs(img_dir, exist_ok=True)
-    if args.json_path:
-        os.makedirs(args.json_path, exist_ok=True)
-        json_file_save = os.path.join(args.json_path, json_file_save)
 
     for attempt in range(10):
         try:

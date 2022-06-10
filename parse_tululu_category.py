@@ -85,13 +85,13 @@ def main_fn():
 
     logging.basicConfig(format=f'%(levelname)s %(message)s')
 
-    books_dir = os.environ.get('BOOKS_DIR')
-    img_dir = os.environ.get('IMAGES_DIR')
+    books_dir_name = os.environ.get('BOOKS_DIR')
+    img_dir_name = os.environ.get('IMAGES_DIR')
     json_file_name = os.environ.get('JSON_FILENAME')
 
     os.makedirs(args.dest_folder, exist_ok=True)
-    books_dir = os.path.join(args.dest_folder, books_dir)
-    img_dir = os.path.join(args.dest_folder, img_dir)
+    books_dir_path = os.path.join(args.dest_folder, books_dir_name)
+    img_dir_path = os.path.join(args.dest_folder, img_dir_name)
     json_file_path = os.path.join(args.json_path, json_file_name)
 
     if args.end_page and args.end_page < args.start_page:
@@ -99,9 +99,9 @@ def main_fn():
         raise
 
     if not args.skip_txt:
-        os.makedirs(books_dir, exist_ok=True)
+        os.makedirs(books_dir_path, exist_ok=True)
     if not args.skip_imgs:
-        os.makedirs(img_dir, exist_ok=True)
+        os.makedirs(img_dir_path, exist_ok=True)
 
     for attempt in range(10):
         try:
@@ -132,13 +132,13 @@ def main_fn():
             if not args.skip_imgs:
                 main.download_image(
                     book_details['img url'],
-                    img_dir
+                    img_dir_path
                     )
             if not args.skip_txt:
                 main.download_txt(
                     book_details['title'],
                     book_id,
-                    folder=books_dir
+                    folder=books_dir_path
                     )
 
         except requests.HTTPError:

@@ -87,12 +87,12 @@ def main_fn():
 
     books_dir = os.environ.get('BOOKS_DIR')
     img_dir = os.environ.get('IMAGES_DIR')
-    json_file_save = 'book_info.json'
+    json_file_name = os.environ.get('JSON_FILENAME')
 
     os.makedirs(args.dest_folder, exist_ok=True)
     books_dir = os.path.join(args.dest_folder, books_dir)
     img_dir = os.path.join(args.dest_folder, img_dir)
-    json_file_save = os.path.join(args.json_path, json_file_save)
+    json_file_path = os.path.join(args.json_path, json_file_name)
 
     if args.end_page and args.end_page < args.start_page:
         logging.warning('The start_page arg is bigger than end_page')
@@ -144,7 +144,7 @@ def main_fn():
         except requests.HTTPError:
             logging.warning('There is no book with such id. Trying next id...')
 
-    with open(json_file_save, 'w', encoding='utf-8') as json_file:
+    with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(books_details, json_file, ensure_ascii=False)
 
 

@@ -12,8 +12,10 @@ pip install -r requirements.txt
 ```dotenv
 BOOKS_DIR='books'
 IMAGES_DIR='images'
+JSON_FILENAME='book_info.json'
 ```
-Таким образом вы укажите названия директорий по умолчанию для скачивания книг (`BOOKS_DIR`) и их обложек(`IMAGES_DIR`).
+Таким образом вы укажите названия директорий по умолчанию для скачивания книг (`BOOKS_DIR`), их обложек(`IMAGES_DIR`) и
+имя JSON файла с дополнительной информацией по книгам. (`JSON_FILENAME`).
 
 Описание работы main.py
 ---

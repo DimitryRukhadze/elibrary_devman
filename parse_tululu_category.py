@@ -23,13 +23,7 @@ def parse_book_urls(page_html, base_book_url):
     return book_urls
 
 
-def get_book_urls(start_page, end_page=0):
-
-    if not end_page:
-        end_page = start_page + 1
-
-    if end_page:
-        end_page += 1
+def get_book_urls(start_page, end_page):
 
     all_book_urls = []
 
@@ -97,6 +91,10 @@ def main_fn():
     if args.end_page and args.end_page < args.start_page:
         logging.warning('The start_page arg is bigger than end_page')
         raise
+    if not args.end_page:
+        args.end_page = args.start_page
+
+    args.end_page += 1
 
     if not args.skip_txt:
         os.makedirs(books_dir_path, exist_ok=True)
@@ -119,30 +117,36 @@ def main_fn():
     books_details = []
 
     for url in book_urls:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
+        for attempt in range(10):
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
 
-            main.check_for_redirect(response)
+                main.check_for_redirect(response)
 
-            book_details = main.parse_book_page(response.text, url)
-            books_details.append(book_details)
-            book_id = urlsplit(url).path.strip('/')[1:]
+                book_details = main.parse_book_page(response.text, url)
+                books_details.append(book_details)
+                book_id = urlsplit(url).path.strip('/')[1:]
 
-            if not args.skip_imgs:
-                main.download_image(
-                    book_details['img url'],
-                    img_dir_path
-                    )
-            if not args.skip_txt:
-                main.download_txt(
-                    book_details['title'],
-                    book_id,
-                    folder=books_dir_path
-                    )
-
-        except requests.HTTPError:
-            logging.warning('There is no book with such id. Trying next id...')
+                if not args.skip_imgs:
+                    main.download_image(
+                        book_details['img url'],
+                        img_dir_path
+                        )
+                if not args.skip_txt:
+                    main.download_txt(
+                        book_details['title'],
+                        book_id,
+                        folder=books_dir_path
+                        )
+                break
+            except requests.HTTPError:
+                logging.warning('There is no book with such id. Trying next id...')
+                break
+            except requests.ConnectionError:
+                logging.warning(f'Connection retry. {attempt} try')
+        else:
+            logging.critical('Connection lost. Failed to reconnect')
 
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(books_details, json_file, ensure_ascii=False)

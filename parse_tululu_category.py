@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from retry import retry
 
-import main
+import tululu_parser
 
 
 def parse_book_urls(page_html, base_book_url):
@@ -32,7 +32,7 @@ def get_book_urls(start_page, end_page):
 
         result = requests.get(sci_fi_url)
         result.raise_for_status()
-        main.check_for_redirect(result)
+        tululu_parser.check_for_redirect(result)
 
         all_book_urls.extend(parse_book_urls(result.text, sci_fi_url))
 
@@ -120,19 +120,19 @@ def main_fn():
                 response = requests.get(url)
                 response.raise_for_status()
 
-                main.check_for_redirect(response)
+                tululu_parser.check_for_redirect(response)
 
-                book_details = main.parse_book_page(response.text, url)
+                book_details = tululu_parser.parse_book_page(response.text, url)
                 books_details.append(book_details)
                 book_id = urlsplit(url).path.strip('/')[1:]
 
                 if not args.skip_imgs:
-                    main.download_image(
+                    tululu_parser.download_image(
                         book_details['img url'],
                         img_dir_path
                         )
                 if not args.skip_txt:
-                    main.download_txt(
+                    tululu_parser.download_txt(
                         book_details['title'],
                         book_id,
                         folder=books_dir_path

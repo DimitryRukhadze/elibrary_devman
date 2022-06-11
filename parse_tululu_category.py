@@ -56,8 +56,7 @@ def main_fn():
     parser.add_argument(
         '--dest_folder',
         default=os.getcwd(),
-        help='Download folder',
-        type=str
+        help='Download folder'
         )
     parser.add_argument(
         '--skip_imgs',
@@ -72,8 +71,7 @@ def main_fn():
     parser.add_argument(
         '--json_path',
         default=os.getcwd(),
-        help='Указать путь для сохранения .json',
-        type=str
+        help='Указать путь для сохранения .json'
         )
     args = parser.parse_args()
 

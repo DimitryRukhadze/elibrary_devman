@@ -128,7 +128,7 @@ def main_fn():
 
                 if not args.skip_imgs:
                     tululu_parser.download_image(
-                        book_details['img url'],
+                        book_details['img_url'],
                         img_dir_path
                         )
                 if not args.skip_txt:

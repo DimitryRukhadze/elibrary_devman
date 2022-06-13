@@ -83,7 +83,7 @@ def parse_book_page(book_page_html, book_page_url):
     book_description = {
         'title': book_name.strip(),
         'author': book_author.strip(),
-        'img url': book_img_full_url,
+        'img_url': book_img_full_url,
         'comments': book_comments,
         'genres': book_genres
     }

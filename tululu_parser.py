@@ -29,11 +29,13 @@ def download_txt(filename, id_number, folder='books/'):
 
     os.makedirs(folder, exist_ok=True)
 
-    filename = f'{id_number}. {filename}'
+    filename = f'{id_number} {filename}.txt'
     valid_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, valid_filename)
+    print(filepath)
 
-    with open(f'{filepath}.txt', 'w', encoding='utf-8') as book:
+
+    with open(filepath, 'w', encoding='utf-8') as book:
         book.write(response.text)
 
     return filepath
@@ -52,6 +54,7 @@ def download_image(img_url, img_folder):
     with open(filepath, 'wb') as book_img:
         book_img.write(response.content)
 
+    return filepath
 
 def parse_book_page(book_page_html, book_page_url):
 

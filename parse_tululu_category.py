@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import argparse
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -127,16 +127,19 @@ def main_fn():
                 book_id = urlsplit(url).path.strip('/')[1:]
 
                 if not args.skip_imgs:
-                    tululu_parser.download_image(
+                    book_img_path = tululu_parser.download_image(
                         book_details['img_url'],
                         img_dir_path
                         )
+                    book_details['img_src'] = os.path.relpath(book_img_path).replace('\\','/')
+
                 if not args.skip_txt:
-                    tululu_parser.download_txt(
+                    book_txt_path = tululu_parser.download_txt(
                         book_details['title'],
                         book_id,
                         folder=books_dir_path
                         )
+                    book_details['book_path'] = os.path.relpath(book_txt_path).replace('\\','/')
                 break
             except requests.HTTPError:
                 logging.warning('There is no book with such id. Trying next id...')

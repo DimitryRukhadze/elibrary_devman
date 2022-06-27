@@ -32,8 +32,6 @@ def download_txt(filename, id_number, folder='books/'):
     filename = f'{id_number} {filename}.txt'
     valid_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, valid_filename)
-    print(filepath)
-
 
     with open(filepath, 'w', encoding='utf-8') as book:
         book.write(response.text)

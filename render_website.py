@@ -17,28 +17,35 @@ def on_reload():
     with open('book_info.json', 'r', encoding='utf-8') as books_info:
         books_details = json.load(books_info)
 
-    books_pages = list(chunked(books_details, 20))
+    html_dir = 'pages'
+    os.makedirs(html_dir, exist_ok=True)
 
-    pages_dir = 'pages'
+    pages_of_books_details = list(chunked(books_details, 20))
 
-    os.makedirs(pages_dir, exist_ok=True)
+    all_pages_links = [
+        f'index{page_num + 1}.html'
+        for page_num in range(len(pages_of_books_details))
+    ]
 
-    for page_num, books in enumerate(books_pages,1):
+    for page_num, details in enumerate(pages_of_books_details):
 
-        books_rows = list(chunked(books, 2))
+        books_rows = list(chunked(details, 2))
+
+        page_name = all_pages_links[page_num]
+        page_path = os.path.join(html_dir, page_name).replace('\\','/')
 
         rendered_page = template.render(
-            book_card_details = books_rows
+            book_card_details = books_rows,
+            all_pages = all_pages_links,
+            curr_name = page_path
         )
-
-        page_name = f'index{page_num}.html'
-        page_path = os.path.join(pages_dir, page_name).replace('\\','/')
 
         with open(page_path, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
+
 on_reload()
 
 server = Server()
-server.watch('index.html', on_reload)
-server.serve(root='.')
+server.watch('pages/*.html', on_reload)
+server.serve(default_filename='pages/index1.html')

@@ -7,6 +7,17 @@
     <title>Library</title>
 </head>
 <body>
+  <div class="mx-auto" style="width: 200px;">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Предыдущая</a></li>
+        {% for page in all_pages %}
+          <li class="page-item"><a class="page-link" href="{{page}}">{{all_pages.index(page) + 1}}</a></li>
+        {% endfor %}
+        <li class="page-item"><a class="page-link" href="#">Следующая</a></li>
+      </ul>
+    </nav>
+  </div>
   {% for details_chunk in book_card_details %}
     <div class="container">
       <div class="row">
@@ -15,13 +26,13 @@
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row no-gutters">
                 <div class="col-md-4">
-                  <img src="{{ book_details.img_src|urlencode }}" class="card-img" alt="{{book_details.title}}">
+                  <img src="../{{ book_details.img_src|urlencode }}" class="card-img" alt="{{book_details.title}}">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
                     <h5 class="card-title">{{book_details.title}}</h5>
                     <p class="card-text">{{book_details.author}}</p>
-                    <a href="{{ book_details.book_path|urlencode }}">Читать</a>
+                    <a href="../{{ book_details.book_path|urlencode }}">Читать</a>
                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                   </div>
                 </div>

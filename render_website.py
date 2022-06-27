@@ -48,4 +48,4 @@ on_reload()
 
 server = Server()
 server.watch('pages/*.html', on_reload)
-server.serve(default_filename='pages/index1.html')
+server.serve(root='pages/', default_filename='index1.html')

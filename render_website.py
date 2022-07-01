@@ -23,7 +23,7 @@ def on_reload():
     pages_of_books_details = list(chunked(books_details, 20))
 
     all_pages_links = [
-        f'index{page_num + 1}.html'
+        os.path.join(html_dir, f'index{page_num + 1}.html').replace('\\','/')
         for page_num in range(len(pages_of_books_details))
     ]
 
@@ -31,13 +31,18 @@ def on_reload():
 
         books_rows = list(chunked(details, 2))
 
-        page_name = all_pages_links[page_num]
-        page_path = os.path.join(html_dir, page_name).replace('\\','/')
+        page_path = all_pages_links[page_num]
+        prev_page = all_pages_links[page_num - 1]
+
+        if page_num + 1 < len(all_pages_links):
+            next_page = all_pages_links[page_num + 1]
 
         rendered_page = template.render(
             book_card_details = books_rows,
             all_pages = all_pages_links,
-            curr_name = page_path
+            curr_name = page_path,
+            prev_page = prev_page,
+            next_page = next_page
         )
 
         with open(page_path, 'w', encoding="utf8") as file:
@@ -47,5 +52,5 @@ def on_reload():
 on_reload()
 
 server = Server()
-server.watch('pages/*.html', on_reload)
+server.watch('pages/*.html', on_reload())
 server.serve(root='.', default_filename='pages/index1.html')

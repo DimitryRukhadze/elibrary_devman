@@ -7,14 +7,32 @@
     <title>Library</title>
 </head>
 <body>
-  <div class="mx-auto" style="width: 200px;">
+  <div class="mx-auto mt-5" style="width: 200px;">
     <nav aria-label="Page navigation example">
       <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Назад</a></li>
+        {% if curr_name == all_pages[0] %}
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true">Назад</a>
+          </li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="../{{prev_page}}">Назад</a></li>
+        {% endif %}
           {% for page in all_pages %}
-            <li class="page-item"><a class="page-link" href="pages/{{page}}">{{all_pages.index(page) + 1}}</a></li>
+            {% if page == curr_name %}
+              <li class="page-item active" aria-current="page">
+              <a class="page-link" href="../{{page}}">{{all_pages.index(page) + 1}}</a>
+              </li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="../{{page}}">{{all_pages.index(page) + 1}}</a></li>
+            {% endif %}
           {% endfor %}
-        <li class="page-item"><a class="page-link" href="#">Вперёд</a></li>
+        {% if curr_name == all_pages[-1] %}
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true">Вперёд</a>
+          </li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="../{{next_page}}">Вперёд</a></li>
+        {% endif %}
       </ul>
     </nav>
   </div>
@@ -32,6 +50,11 @@
                   <div class="card-body">
                     <h5 class="card-title">{{book_details.title}}</h5>
                     <p class="card-text">{{book_details.author}}</p>
+                    <p>
+                    {% for genre in book_details.genres %}
+                      <span class="badge badge-light">{{genre}}</span>
+                    {% endfor %}
+                    </p>
                     <a href="../{{ book_details.book_path|urlencode }}">Читать</a>
                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                   </div>

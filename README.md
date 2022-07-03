@@ -1,6 +1,8 @@
 Описание модуля
 ===
-Этот модуль скачивает книги из открытой библиотеки [tululu.org](https://tululu.org). Модуль сделан в учебных целях.
+Этот модуль скачивает книги из открытой библиотеки [tululu.org](https://tululu.org) и собирает сайт-библиотеку со скачанными 
+книгами. Пример сайта (без обложек и возможности чтения книг) по адресу: [https://dimitryrukhadze.github.io/elibrary_devman/pages/index1.html](https://dimitryrukhadze.github.io/elibrary_devman/pages/index1.html).
+Модуль сделан в учебных целях.
 
 Установка и подготовка к работе
 ---
@@ -77,3 +79,10 @@ python parse_tululu_category.py 12
     ```
     python parse_tululu_category.py 12 --json_path bookinfo
     ```
+
+Описание работы render_website.py
+---
+
+Формирует по шаблону страницы сайта и запускает сервер livereload для их просмотра. После загрузки сервера сайт можно
+увидеть по адресу [http://127.0.0.1:5500/]( http://127.0.0.1:5500/). Сайт также работает оффлайн - просто откройте любую
+из страниц в папке `pages`.

@@ -49,8 +49,10 @@ def on_reload():
             file.write(rendered_page)
 
 
-on_reload()
+if __name__ == '__main__':
 
-server = Server()
-server.watch('pages/*.html', on_reload())
-server.serve(root='.', default_filename='pages/index1.html')
+    on_reload()
+
+    server = Server()
+    server.watch('pages/*.html', on_reload())
+    server.serve(root='.', default_filename='pages/index1.html')

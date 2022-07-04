@@ -1,6 +1,4 @@
 *env
-books
-images
 *.gitattributes
 bs4_tutorial.py
 *.pyc

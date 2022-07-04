@@ -123,7 +123,6 @@ def main_fn():
                 tululu_parser.check_for_redirect(response)
 
                 book_details = tululu_parser.parse_book_page(response.text, url)
-                books_details.append(book_details)
                 book_id = urlsplit(url).path.strip('/')[1:]
 
                 if not args.skip_imgs:
@@ -140,6 +139,9 @@ def main_fn():
                         folder=books_dir_path
                         )
                     book_details['book_path'] = os.path.relpath(book_txt_path).replace('\\','/')
+
+                if book_txt_path:
+                    books_details.append(book_details)
                 break
             except requests.HTTPError:
                 logging.warning('There is no book with such id. Trying next id...')

@@ -6,6 +6,10 @@ from livereload import Server, shell
 from more_itertools import chunked
 
 
+BOOKS_ON_PAGE = 20
+BOOKS_IN_ROW = 2
+
+
 def on_reload():
     env = Environment(
         loader=FileSystemLoader('.'),
@@ -20,7 +24,7 @@ def on_reload():
     html_dir = 'pages'
     os.makedirs(html_dir, exist_ok=True)
 
-    pages_of_books_details = list(chunked(books_details, 20))
+    pages_of_books_details = list(chunked(books_details, BOOKS_ON_PAGE))
 
     all_pages_links = [
         os.path.join(html_dir, f'index{page_num + 1}.html').replace('\\','/')
@@ -29,7 +33,7 @@ def on_reload():
 
     for page_num, details in enumerate(pages_of_books_details):
 
-        books_rows = list(chunked(details, 2))
+        books_rows = list(chunked(details, BOOKS_IN_ROW))
 
         page_path = all_pages_links[page_num]
         prev_page = all_pages_links[page_num - 1]

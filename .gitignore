@@ -3,3 +3,4 @@
 bs4_tutorial.py
 *.pyc
 *.json
+.idea
